@@ -22,10 +22,21 @@ typedef struct {
     Pedido *fim;                   // Ponteiro para o fim da fila
 } FilaPedidos;
 
+// Estrutura para controle de faturamento
+typedef struct {
+    float vendas[10];       // Guarda as últimas 10 vendas
+    int total_vendas;       // Contador de vendas realizadas
+} Faturamento;
+
 // Protótipos das funções de Cardápio (teste)
 Item* adicionarAoCardapio(Item *lista, int id, char *nome, float preco);
 void listarCardapio(Item *lista);
 void editarItem(Item *lista, int id);
 Item* deletarItem(Item *lista, int id);
+
+// Protótipos das funções de Faturamento
+void inicializarFaturamento(Faturamento *f);
+void adicionarVenda(Faturamento *f, float valor);
+void mostrarRelatorio(Faturamento *f);
 
 #endif

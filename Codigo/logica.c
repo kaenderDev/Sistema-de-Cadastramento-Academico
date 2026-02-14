@@ -6,7 +6,7 @@
 #include <string.h>
 #include "cafeteria.h"
 
-// Função para Listar: Essencial para navegação antes de editar ou deletar
+// Função p/ Listar
 
 void listarCardapio(Item *lista) {
     if (lista == NULL) {
@@ -22,7 +22,7 @@ void listarCardapio(Item *lista) {
     printf("-------------------------\n");
 }
 
-// Função para Editar: Busca pelo ID e altera os outros campos
+//  Busca pelo ID e altera os outros campos
 void editarItem(Item *lista, int id) {
     Item *atual = lista;
     while (atual != NULL) {
@@ -40,7 +40,7 @@ void editarItem(Item *lista, int id) {
     printf("Erro: Item com ID %d nao encontrado.\n", id);
 }
 
-// Função para Deletar: Remove o nó da lista e libera a memória
+// Função p/ Deletar
 Item* deletarItem(Item *lista, int id) {
     Item *atual = lista;
     Item *anterior = NULL;
@@ -66,7 +66,7 @@ Item* deletarItem(Item *lista, int id) {
     return lista;
 }
 
-// Retornamos o ponteiro para que o 'main' sempre tenha o endereço atualizado do início do cardápio
+// O ponteiro retorna para que o 'main' sempre tenha o endereço atualizado do início do cardápio
 Item* adicionarAoCardapio(Item *inicio, int id, char *nome, float preco) {
     Item *novo = (Item*)malloc(sizeof(Item));
     
@@ -81,13 +81,57 @@ Item* adicionarAoCardapio(Item *inicio, int id, char *nome, float preco) {
     novo->nome[49] = '\0';
     novo->preco = preco;
 
-    // Faz o novo item apontar para o antigo início (encadeamento)
+    // Faz o encadeamento
     novo->proximo = inicio;
     
     // O novo item agora é o primeiro da lista
     return novo; 
 }
 
+
+
+// Inicializa o sistema de faturamento zerado
+void inicializarFaturamento(Faturamento *f) {
+    int i;
+    for (i = 0; i < 10; i++) {
+        f->vendas[i] = 0.0;
+    }
+    f->total_vendas = 0;
+}
+
+// Adiciona uma venda no array de faturamento
+void adicionarVenda(Faturamento *f, float valor) {
+    int indice = f->total_vendas % 10; // Usa o resto pra circular no array
+    f->vendas[indice] = valor;
+    f->total_vendas++;
+    printf("Venda de R$ %.2f registrada com sucesso!\n", valor);
+}
+
+// Mostra o relatório com as últimas vendas
+void mostrarRelatorio(Faturamento *f) {
+    int i;
+    float total = 0.0;
+    int qtd = (f->total_vendas < 10) ? f->total_vendas : 10;
+    
+    printf("\n========== RELATORIO DE VENDAS ==========\n");
+    
+    if (f->total_vendas == 0) {
+        printf("Nenhuma venda registrada ainda.\n");
+        printf("=========================================\n");
+        return;
+    }
+    
+    printf("Ultimas %d vendas:\n", qtd);
+    for (i = 0; i < qtd; i++) {
+        printf("Venda %d: R$ %.2f\n", i+1, f->vendas[i]);
+        total += f->vendas[i];
+    }
+    
+    printf("-----------------------------------------\n");
+    printf("Total arrecadado: R$ %.2f\n", total);
+    printf("Media por venda: R$ %.2f\n", total/qtd);
+    printf("=========================================\n");
+}
 
 
 #endif 
