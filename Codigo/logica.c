@@ -195,5 +195,104 @@ void mostrarCancelamentos(PilhaCancelamento *p) {
     }
 }
 
+// Funções Pedidos e Fila
+
+// Cria novo pedido
+Pedido* criarPedido(int id, char *nome_cliente){
+    Pedido *novo = (Pedido*)malloc(sizeof(Pedido));
+    if(novo == NULL){
+        printf("Erro ao alocar memoria para o pedido.\n");
+        return NULL;
+    }
+
+    novo->id_p = id;
+    strcpy(novo->nome_cliente, nome_cliente);
+
+    novo->itens_id = NULL;
+    novo->quantidade_itens = 0;
+
+    novo->status = 0;
+    novo->proximo = NULL;
+
+    return novo;
+}
+
+// Adiciona item ao pedido
+void adicionarItemAoPedido(Pedido *p, int id_i){
+    p->quantidade_itens++;
+
+    int *temp = (int*)realloc(p->itens_id, p->quantidade_itens * sizeof(int));
+
+    if(temp == NULL){
+        printf("Erro ao adicionar item.\n");
+        p->quantidade_itens--;
+        return;
+    }
+
+    p->itens_id = temp;
+
+    p->itens_id[p->quantidade_itens - 1] = id_i;
+
+    printf("Item %d adicionado ao pedido de %s.\n", id_i, p->nome_cliente);
+}
+
+// Inicializa a fila
+void inicializarFila(FilaPedidos *f){
+    f->inicio = NULL;
+    f->fim = NULL;
+}
+
+// Enfileira os pedidos
+void enfileirarPedido(FilaPedidos *f, Pedido *p){
+    p->proximo = NULL;
+
+    if(f->inicio == NULL){
+        f->inicio = p;
+        f->fim = p;
+    } else{
+        f->fim->proximo = p;
+        f->fim = p;
+    }
+
+    printf("Pedido #%d (Cliente: %s) entrou na fila de preparacao.\n", p->id_p, p->nome_cliente);
+}
+
+// Finalizar o pedido da fila
+Pedido* desenfileirarPedido(FilaPedidos *f){
+    if(f->inicio == NULL){
+        printf("A fila de pedidos esta vazia!\n");
+        return NULL;
+    }
+
+    Pedido *pedidoRemovido = f->inicio;
+
+    f->inicio = f->inicio->proximo;
+
+    if(f->inicio == NULL){
+        f->fim = NULL;
+    }
+
+    pedidoRemovido->proximo = NULL;
+
+    pedidoRemovido->status = 2;
+
+    return pedidoRemovido;
+}
+
+// Listar os pedidos em fila
+void listarFilaPedidos(FilaPedidos *f) {
+    if (f->inicio == NULL) {
+        printf("\n--- Fila de Pedidos Vazia ---\n");
+        return;
+    }
+
+    printf("\n--- Fila de Preparacao ---\n");
+    Pedido *atual = f->inicio;
+    while (atual != NULL) {
+        printf("ID: %d | Cliente: %s | Qtd Itens: %d\n", atual->id_p, atual->nome_cliente, atual->quantidade_itens);
+        atual = atual->proximo;
+    }
+    printf("--------------------------\n");
+}
 
 #endif 

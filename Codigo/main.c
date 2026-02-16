@@ -5,6 +5,8 @@
 
 int main() {
     Item *cardapio = NULL;
+    FilaPedidos fila;
+    inicializarFila(&fila);
     
     
     // 1. Teste de Adição
@@ -47,6 +49,30 @@ int main() {
     }
     
     mostrarCancelamentos(&pilha); //retornar vazio
+
+    // Teste de Pedidos
+    Pedido *p1 = criarPedido(101, "Ana");
+    adicionarItemAoPedido(p1, 1);
+    
+    Pedido *p2 = criarPedido(102, "Carlos");
+    adicionarItemAoPedido(p2, 1);
+
+    enfileirarPedido(&fila, p1);
+    enfileirarPedido(&fila, p2);
+
+    listarFilaPedidos(&fila);
+
+    printf("\nEntregando pedido...\n");
+    Pedido *entregue = desenfileirarPedido(&fila);
+    
+    if (entregue != NULL) {
+        printf("Pedido #%d da %s foi entregue!\n", entregue->id_p, entregue->nome_cliente);
+        
+        free(entregue->itens_id); // Libera o array de itens
+        free(entregue);           // Libera a struct pedido
+    }
+
+    listarFilaPedidos(&fila);
 
     return 0;
 }
