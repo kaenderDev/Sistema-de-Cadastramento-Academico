@@ -71,10 +71,20 @@ Item* deletarItem(Item *lista, int id) {
 
 // O ponteiro retorna para que o 'main' sempre tenha o endereço atualizado do início do cardápio
 Item* adicionarAoCardapio(Item *inicio, int id, char *nome, float preco) {
+    // Verificação de ID duplicado
+    Item *atual = inicio;
+    while(atual != NULL){
+        if (atual -> id_i == id) {
+            printf ("\nErro: O id %d ja existe no cardapio!\n", id);
+            return inicio;
+        }
+        atual= atual->proximo;
+    }
+
+     // Se não for duplicado, cria o novo Item
     Item *novo = (Item*)malloc(sizeof(Item));
-    
     if (novo == NULL) {
-        printf("Erro de memória.\n");
+        printf("Erro de memoria.\n");
         return inicio;
     }
 

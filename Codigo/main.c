@@ -1,80 +1,153 @@
 #include <stdio.h>
-#include "cafeteria.h"
 #include <string.h>
 #include <stdlib.h>
+#include "cafeteria.h"
 #include "logica.c"
+
+void pausar() {
+    printf("\nPressione Enter para continuar...");
+    getchar(); // Limpa o buffer
+    getchar(); // Aguarda a entrada
+}
 
 int main() {
     Item *cardapio = NULL;
     FilaPedidos fila;
+    Faturamento fat;
+    PilhaCancelamento pilha;
+
     inicializarFila(&fila);
-    
-    
-    // 1. Teste de Adição
-    cardapio = adicionarAoCardapio(cardapio, 1, "Cafe", 5.0);
-    cardapio = adicionarAoCardapio(cardapio, 2, "Bolo", 10.0);
-    
-    // 2. Listagem Inicial
-    listarCardapio(cardapio);
-
-    // 3. Teste de Edição
-    printf("\nEditando o item 1...\n");
-    editarItem(cardapio, 1);
-    
-    // 4. Teste de Remoção
-    printf("\nRemovendo o item 2...\n");
-    cardapio = deletarItem(cardapio, 2);
-
-    // 5. Resultado Final
-    listarCardapio(cardapio);
-    
-    //Testes de cancelamento
-    
-    Pedido pedido; // pedido de teste
-    pedido.id_p = 1;
-    pedido.status = 0;
-    pedido.quantidade_itens = 0;
-    pedido.itens_id = NULL;
-    strcpy(pedido.nome_cliente, "Teste");
-    
-    PilhaCancelamento pilha; 
+    inicializarFaturamento(&fat);
     inicializarPilha(&pilha);
-    mostrarCancelamentos(&pilha); //retornar vazio
-    empilharCancelamento(&pilha, &pedido); //adiciona o pedido
-    mostrarCancelamentos(&pilha); //retornar pedido 01
-    
-    Pedido *removido = removerCancelamento(&pilha); //remove 01
-    if (removido != NULL) {
-    free(removido->itens_id);
-    free(removido);
-    }
-    
-    mostrarCancelamentos(&pilha); //retornar vazio
 
-    // Teste de Pedidos
-    Pedido *p1 = criarPedido(101, "Ana");
-    adicionarItemAoPedido(p1, 1);
-    
-    Pedido *p2 = criarPedido(102, "Carlos");
-    adicionarItemAoPedido(p2, 1);
+    int menu_principal, sub;
 
-    enfileirarPedido(&fila, p1);
-    enfileirarPedido(&fila, p2);
+    do {
+        system("clear || cls");
+        printf("\n--- SISTEMA CAFETERIA ---\n");
+        printf("1. Gerenciar Cardapio\n");
+        printf("2. Pedidos e Fila\n");
+        printf("3. Financeiro\n");
+        printf("0. Sair\n");
+        printf("Escolha: ");
+        scanf("%d", &menu_principal);
 
-    listarFilaPedidos(&fila);
+        switch (menu_principal) {
+            case 1:
+                do {
+                    system("clear || cls");
+                    printf("--- Gerenciar Cardapio ---\n");
+                    printf("1. Adicionar Item \n");
+                    printf("2. Listar Itens\n");
+                    printf("3. Editar Item\n");
+                    printf("4. Remover Item\n");
+                    printf("0. Voltar\n");
+                    printf("Escolha: ");
+                    scanf("%d", &sub);
 
-    printf("\nEntregando pedido...\n");
-    Pedido *entregue = desenfileirarPedido(&fila);
-    
-    if (entregue != NULL) {
-        printf("Pedido #%d da %s foi entregue!\n", entregue->id_p, entregue->nome_cliente);
-        
-        free(entregue->itens_id); // Libera o array de itens
-        free(entregue);           // Libera a struct pedido
-    }
+                    if (sub == 1) {
+                        int id; char nome[50]; float preco;
+                        printf("ID: "); scanf("%d", &id);
+                        printf("Nome: "); scanf(" %[^\n]s", nome);
+                        printf("Preco: "); scanf("%f", &preco);
+                        cardapio = adicionarAoCardapio(cardapio, id, nome, preco);
+                        pausar();
 
-    listarFilaPedidos(&fila);
+                    } else if (sub == 2) {
+                        listarCardapio(cardapio);
+                        pausar();
+                    } else if (sub == 3) {
+                        int id; printf("ID para editar: "); scanf("%d", &id);
+                        editarItem(cardapio, id);
+                        pausar();
+                    } else if (sub == 4) {
+                        int id; printf("ID para remover: "); scanf("%d", &id);
+                        cardapio = deletarItem(cardapio, id);
+                        pausar();
+                    }
+                } while (sub != 0);
+                break;
+
+            case 2:
+                do {
+                    system("clear || cls");
+                    printf("--- GERENCIAR PEDIDOS ---\n");
+                    printf("1. Novo Pedido\n");
+                    printf("2. Ver Fila de Preparacao\n");
+                    printf("3. Finalizar e Entregar\n");
+                    printf("4. Cancelar Pedido Atual\n");
+                    printf("5. Ver Pilha de Cancelados\n");
+                    printf("0. Voltar\n");
+                    printf("Escolha: ");
+                    scanf("%d", &sub);
+
+                    if (sub == 1) {
+                        int id; char cliente[50];
+                        printf("ID Pedido: "); scanf("%d", &id);
+                        printf("Nome Cliente: "); scanf(" %[^\n]s", cliente);
+                        Pedido *p = criarPedido(id, cliente);
+                        int id_i;
+                        while(1) {
+                            listarCardapio(cardapio);
+                            printf("ID Item (0 para encerrar): "); scanf("%d", &id_i);
+                            if(id_i == 0) break;
+                            adicionarItemAoPedido(p, id_i);
+                        }
+                        enfileirarPedido(&fila, p);
+                        pausar();
+                    } else if (sub == 2) {
+                        listarFilaPedidos(&fila);
+                        pausar();
+                    } else if (sub == 3) {
+                        Pedido *entregue = desenfileirarPedido(&fila);
+                        if(entregue) {
+                            float valor;
+                            printf("Total da venda para %s: ", entregue->nome_cliente); 
+                            scanf("%f", &valor);
+                            adicionarVenda(&fat, valor);
+                            free(entregue->itens_id); 
+                            free(entregue);
+                        }
+                        pausar();
+                    } else if (sub == 4) {
+                        if (fila.inicio != NULL) {
+                            Pedido *c = desenfileirarPedido(&fila);
+                            empilharCancelamento(&pilha, c);
+                        } else printf("Fila vazia!\n");
+                        pausar();
+                    } else if (sub == 5) {
+                        mostrarCancelamentos(&pilha);
+                        pausar();
+                    }
+                } while (sub != 0);
+                break;
+
+            case 3:
+                do {
+                    system("clear || cls");
+                    printf("--- FINANCEIRO ---\n");
+                    printf("1. Relatorio de Vendas\n");
+                    printf("0. Voltar\n");
+                    printf("Escolha: ");
+                    scanf("%d", &sub);
+
+                    if (sub == 1) {
+                        mostrarRelatorio(&fat);
+                        pausar();
+                    }
+                } while (sub != 0);
+                break;
+
+            case 0:
+                printf("Saindo do sistema...\n");
+                break;
+
+            default:
+                printf("Opcao invalida!\n");
+                pausar();
+                break;
+        }
+    } while (menu_principal != 0);
 
     return 0;
 }
-
