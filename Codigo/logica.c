@@ -320,4 +320,13 @@ void listarFilaPedidos(FilaPedidos *f) {
     printf("--------------------------\n");
 }
 
+// libera a fila 
+void limparFila(FilaPedidos *f){
+    while((f->inicio != NULL)){
+        Pedido *removido = desenfileirarPedido(f);
+        free(removido);
+        f->fim = NULL;
+    }
+}
+
 #endif 

@@ -58,5 +58,6 @@ void inicializarFila(FilaPedidos *f);
 void enfileirarPedido(FilaPedidos *f, Pedido*p);
 Pedido* desenfileirarPedido(FilaPedidos *f);
 void listarFilaPedidos(FilaPedidos *f);
+void limparFila(FilaPedidos *f);
 
 #endif

@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include "cafeteria.h"
+#include "logica.c"
+
 
 void pausar() {
     printf("\nPressione Enter para continuar...");
@@ -139,6 +141,7 @@ int main() {
             case 0:
                 printf("Saindo do sistema...\n");
                 limparCancelamentos(&pilha);
+                limparFila(&fila);
                 break;
 
             default:
