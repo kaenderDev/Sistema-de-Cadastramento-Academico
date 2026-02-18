@@ -57,7 +57,8 @@ void adicionarItemAoPedido(Pedido *p, int id_produto);
 void inicializarFila(FilaPedidos *f);
 void enfileirarPedido(FilaPedidos *f, Pedido*p);
 Pedido* desenfileirarPedido(FilaPedidos *f);
-void listarFilaPedidos(FilaPedidos *f);
+float calcularTotalPedido(Pedido *p, Item *cardapio);
+void listarFilaPedidos(FilaPedidos *f, Item *cardapio);
 void limparFila(FilaPedidos *f);
 
 #endif

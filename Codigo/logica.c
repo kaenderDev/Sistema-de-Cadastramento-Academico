@@ -282,6 +282,26 @@ void enfileirarPedido(FilaPedidos *f, Pedido *p){
     printf("Pedido #%d (Cliente: %s) entrou na fila de preparacao.\n", p->id_p, p->nome_cliente);
 }
 
+// Calcula o total do pedido com base nos ids dos itens no array dinamico
+// e seus preços no cardápio
+float calcularTotalPedido(Pedido *p, Item *cardapio) {
+    float total = 0.0;
+
+    for (int i = 0; i < p->quantidade_itens; i++) {
+        int id_procurado = p->itens_id[i];
+        Item *atual = cardapio;
+
+        while (atual != NULL) {
+            if (atual->id_i == id_procurado) {
+                total += atual->preco;
+                break;
+            }
+            atual = atual->proximo;
+        }
+    }
+    return total;
+}
+
 // Finalizar o pedido da fila
 Pedido* desenfileirarPedido(FilaPedidos *f){
     if(f->inicio == NULL){
@@ -305,7 +325,7 @@ Pedido* desenfileirarPedido(FilaPedidos *f){
 }
 
 // Listar os pedidos em fila
-void listarFilaPedidos(FilaPedidos *f) {
+void listarFilaPedidos(FilaPedidos *f, Item *cardapio) {
     if (f->inicio == NULL) {
         printf("\n--- Fila de Pedidos Vazia ---\n");
         return;
@@ -314,7 +334,15 @@ void listarFilaPedidos(FilaPedidos *f) {
     printf("\n--- Fila de Preparacao ---\n");
     Pedido *atual = f->inicio;
     while (atual != NULL) {
-        printf("ID: %d | Cliente: %s | Qtd Itens: %d\n", atual->id_p, atual->nome_cliente, atual->quantidade_itens);
+        
+        float total = calcularTotalPedido(atual, cardapio);
+        
+        printf("ID: %d | Cliente: %-10s | Itens: %d | Total: R$ %.2f\n", 
+               atual->id_p, 
+               atual->nome_cliente, 
+               atual->quantidade_itens, 
+               total);
+               
         atual = atual->proximo;
     }
     printf("--------------------------\n");

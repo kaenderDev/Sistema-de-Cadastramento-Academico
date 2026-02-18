@@ -97,14 +97,14 @@ int main() {
                         enfileirarPedido(&fila, p);
                         pausar();
                     } else if (sub == 2) {
-                        listarFilaPedidos(&fila);
+                        listarFilaPedidos(&fila, cardapio); 
                         pausar();
                     } else if (sub == 3) {
                         Pedido *entregue = desenfileirarPedido(&fila);
                         if(entregue) {
-                            float valor;
-                            printf("Total da venda para %s (atual na fila): ", entregue->nome_cliente); 
-                            scanf("%f", &valor);
+                            float valor = calcularTotalPedido(entregue, cardapio);
+                            printf("Pedido de %s finalizado.\n", entregue->nome_cliente);
+                            printf("Total do pedido: R$ %.2f\n", valor);
                             adicionarVenda(&fat, valor);
                             free(entregue->itens_id); 
                             free(entregue);
@@ -119,7 +119,7 @@ int main() {
                     } else if (sub == 5) {
                         mostrarCancelamentos(&pilha);
                         pausar();
-                    }else if (sub == 6) {
+                    } else if (sub == 6) {
                         if (!pilhaVazia(&pilha)) {
                             Pedido *desempilhado = removerCancelamento(&pilha);
                             enfileirarPedido(&fila, desempilhado);
