@@ -245,7 +245,24 @@ Pedido* criarPedido(char *nome_cliente){
 }
 
 // Adiciona item ao pedido
-void adicionarItemAoPedido(Pedido *p, int id_i){
+void adicionarItemAoPedido(Pedido *p, int id_i, Item *cardapio){
+
+    //Verifica se o id do item existe
+
+    Item *atual = cardapio;
+    int encontrado = 0;
+    while ( atual!= NULL){
+        if (atual -> id_i == id_i){
+            encontrado = 1 ;
+            break;
+        }
+        atual = atual->proximo;
+    }
+
+    if (!encontrado){
+        printf("Erro: Item com ID %d nao existe no cardapio!\n", id_i);
+        return;
+    } 
     p->quantidade_itens++;
 
     int *temp = (int*)realloc(p->itens_id, p->quantidade_itens * sizeof(int));

@@ -92,7 +92,7 @@ int main() {
                             listarCardapio(cardapio);
                             printf("ID Item (0 para encerrar): "); scanf("%d", &id_i);
                             if(id_i == 0) break;
-                            adicionarItemAoPedido(p, id_i);
+                            adicionarItemAoPedido(p, id_i, cardapio);
                         }
                         enfileirarPedido(&fila, p);
                         pausar();
