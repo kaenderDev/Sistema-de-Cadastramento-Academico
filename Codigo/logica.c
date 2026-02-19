@@ -288,6 +288,14 @@ void inicializarFila(FilaPedidos *f){
 
 // Enfileira os pedidos
 void enfileirarPedido(FilaPedidos *f, Pedido *p){
+    if(p->quantidade_itens == 0){
+        printf("Erro: O pedido #%d nao possui itens e nao pode ser enfileirado.\n", p->id_p);
+        
+        free(p); 
+        
+        return;
+    }
+    
     p->proximo = NULL;
 
     if(f->inicio == NULL){
